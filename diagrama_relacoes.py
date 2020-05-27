@@ -75,21 +75,19 @@ Cria os relacionamentos
 '''
 def makeRelationships(df):
     ports=['n','ne','e','se','s','sw','w','nw']
-    port_count_h = dict()
-    port_count_t = dict()
+    #port_count_h = dict()
+    #port_count_t = dict()
     des = list(df.iloc[:,0])
     relacionamentos = list(df.iloc[:,1])
     paras = list(df.iloc[:,2])
     tipos = list(df.iloc[:,3])
     bilaterais = list(df.iloc[:,4])
     for i in range(len(des)):
-        pc_h = port_count_h.get(des[i],0)
-        pc_t = port_count_t.get(des[i],0)
-        #g.edge(des[i], paras[i], dir=dirs[bilaterais[i]], label=relacionamentos[i], color=types[tipos[i]], fontcolor=types[tipos[i]],fontsize = '7', penwidth='0.4', headport=ports[pc_h%8], tailport=ports[pc_t%8])#, decorate='true')
-        g.edge(des[i], paras[i], dir=dirs[bilaterais[i]], label=relacionamentos[i], color=types[tipos[i]], fontcolor=types[tipos[i]],fontsize = '7', penwidth='0.4', tailport=ports[pc_t%8])#, decorate='true')
-        #g.edge(des[i], paras[i], dir=dirs[bilaterais[i]], label=relacionamentos[i], color=types[tipos[i]], fontcolor=types[tipos[i]],fontsize = '7', penwidth='0.4', headport=ports[pc_h%8])#, decorate='true')
-        port_count_h[des[i]] = pc_h+1
-        port_count_t[des[i]] = pc_t+1
+        #pc_h = port_count_h.get(des[i],0)
+        #pc_t = port_count_t.get(des[i],0)
+        g.edge(des[i], paras[i], dir=dirs[bilaterais[i]], label=relacionamentos[i], color=types[tipos[i]], fontcolor=types[tipos[i]],fontsize = '10', penwidth='1.0')#, headport=ports[pc_h%8], tailport=ports[pc_t%8])#, decorate='true')
+        #port_count_h[des[i]] = pc_h+1
+        #port_count_t[des[i]] = pc_t+1
 
 #Rodando o código
 df_atores, df_relacionamentos = getDataFrame(fileloc, ator, cor, grupo, de, relacionamento, para, tipo, bilateral)

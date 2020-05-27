@@ -1,0 +1,47 @@
+digraph {
+	compound=true
+	rankdir=BT
+	dpi=600
+	ratio=0.5294
+	Azul [color=blue fixedsize=true fontcolor=white shape=circle style=filled width=1]
+	Verde [color=green fixedsize=true fontcolor=black shape=circle style=filled width=1]
+	Marrom [color=brown fixedsize=true fontcolor=white shape=circle style=filled width=1]
+	Cinza [color=grey fixedsize=true fontcolor=black shape=circle style=filled width=1]
+	Vermelho [color=red fixedsize=true fontcolor=black shape=circle style=filled width=1]
+	FAL [color=black fixedsize=true fontcolor=white shape=circle style=filled width=1]
+	MVL [color=black fixedsize=true fontcolor=white shape=circle style=filled width=1]
+	MVLT [color=black fixedsize=true fontcolor=white shape=circle style=filled width=1]
+	Tharcio [color=gold fixedsize=true fontcolor=black shape=circle style=filled width=1]
+	Azul -> Verde [label="Mantém aliança" color=blue dir=forward fontcolor=blue fontsize=10 penwidth=1.0]
+	Azul -> Verde [label=Depende color=black dir=forward fontcolor=black fontsize=10 penwidth=1.0]
+	MVL -> Verde [label=Deslegitima color=red dir=forward fontcolor=red fontsize=10 penwidth=1.0]
+	Azul -> Marrom [label="Apoia contra as FAL" color=blue dir=forward fontcolor=blue fontsize=10 penwidth=1.0]
+	Marrom -> Verde [label="Reestabelece Rel\nDiplomáticas" color=blue dir=forward fontcolor=blue fontsize=10 penwidth=1.0]
+	Vermelho -> Cinza [label="Coopera Econ/Mil" color=blue dir=both fontcolor=blue fontsize=10 penwidth=1.0]
+	Verde -> Vermelho [label="Acusa/Cortou\nRel diplomáticas" color=red dir=forward fontcolor=red fontsize=10 penwidth=1.0]
+	Vermelho -> FAL [label="Financia/Treina" color=blue dir=forward fontcolor=blue fontsize=10 penwidth=1.0]
+	Marrom -> FAL [label=Combate color=red dir=forward fontcolor=red fontsize=10 penwidth=1.0]
+	FAL -> MVLT [label=Apoia color=blue dir=forward fontcolor=blue fontsize=10 penwidth=1.0]
+	MVLT -> Verde [label=Ataca color=red dir=forward fontcolor=red fontsize=10 penwidth=1.0]
+	FAL -> Verde [label="Declara inimigo" color=red dir=forward fontcolor=red fontsize=10 penwidth=1.0]
+	FAL -> Azul [label="Declara inimigo" color=red dir=forward fontcolor=red fontsize=10 penwidth=1.0]
+	Verde -> FAL [label=Ataca color=red dir=both fontcolor=red fontsize=10 penwidth=1.0]
+	Verde -> Cinza [label=Ataca color=red dir=both fontcolor=red fontsize=10 penwidth=1.0]
+	Verde -> Vermelho [label=Ataca color=red dir=both fontcolor=red fontsize=10 penwidth=1.0]
+	Cinza -> Azul [label="Cortou Rel\ndiplomáticas" color=red dir=forward fontcolor=red fontsize=10 penwidth=1.0]
+	Cinza -> Verde [label=Acusa color=red dir=forward fontcolor=red fontsize=10 penwidth=1.0]
+	Vermelho -> Marrom [label="Mantém aliança" color=blue dir=forward fontcolor=blue fontsize=10 penwidth=1.0]
+	Tharcio -> Cinza [label=Ataca color=red dir=forward fontcolor=red fontsize=10 penwidth=1.0]
+	subgraph cluster_CEAN {
+		label=CEAN
+		style=rounded
+		Azul
+		Verde
+	}
+	subgraph cluster_UVAM {
+		label=UVAM
+		style=rounded
+		Marrom
+		Vermelho
+	}
+}
