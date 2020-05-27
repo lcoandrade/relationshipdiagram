@@ -13,9 +13,11 @@ para = 'para'
 tipo = 'tipo'
 bilateral = 'bilateral'
 
+#Colors
 colors = {'Amarelo':'yellow','Azul':'blue','Cinza':'grey','Marrom':'brown','Ouro':'gold','Preto':'black','Roxo':'purple','Verde':'green','Vermelho':'red','Laranja':'orange'}
 font_colors = {'Amarelo':'black','Azul':'white','Cinza':'black','Marrom':'white','Ouro':'black','Preto':'white','Roxo':'white','Verde':'black','Vermelho':'black','Laranja':'black'}
 
+#Relation types
 types = {'Positivo':'blue', 'Negativo':'red', 'Neutro':'black'}
 dirs = {'Sim':'both', 'Não':'forward'}
 
