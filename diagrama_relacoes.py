@@ -61,6 +61,7 @@ def makeGroups(group_dict, atores):
         with g.subgraph(name='cluster_'+key) as c:
             c.attr(label=key)
             c.attr(style='rounded')
+            c.attr(rank='min')
             for j in ids:
                 c.node(atores[j])
 
@@ -111,6 +112,7 @@ g.attr(compound='true')
 g.attr(rankdir='LR')
 g.attr(dpi='600')
 g.attr(ratio = '0.5294')
+g.attr(newrank='true')
 
 #Constroi os dataframes do excel
 df_atores, df_relacionamentos = getDataFrame(fileloc, ator, cor, grupo, de, relacionamento, para, tipo, bilateral)

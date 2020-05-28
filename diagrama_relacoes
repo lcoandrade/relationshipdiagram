@@ -3,6 +3,7 @@ digraph {
 	rankdir=LR
 	dpi=600
 	ratio=0.5294
+	newrank=true
 	Azul [color=blue fixedsize=true fontcolor=white shape=circle style=filled width=1]
 	Verde [color=green fixedsize=true fontcolor=black shape=circle style=filled width=1]
 	Marrom [color=brown fixedsize=true fontcolor=white shape=circle style=filled width=1]
@@ -14,12 +15,14 @@ digraph {
 	subgraph cluster_CEAN {
 		label=CEAN
 		style=rounded
+		rank=min
 		Azul
 		Verde
 	}
 	subgraph cluster_UVAM {
 		label=UVAM
 		style=rounded
+		rank=min
 		Marrom
 		Vermelho
 	}
