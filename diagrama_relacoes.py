@@ -1,3 +1,5 @@
+#_*_ coding=utf-8 _*_
+
 from graphviz import Digraph
 import pandas as pd
 
@@ -45,7 +47,7 @@ def makeActorNodes(df):
     group_dict = {}
     for i in range(len(atores)):
         if atores[i] not in grupos:
-            g.node(atores[i],shape='circle',color=colors[cores[i]],style='filled', fontcolor=font_colors[cores[i]], fixedsize='true',width='1')
+            g.node(atores[i],shape='circle',color=colors[cores[i]],style='filled', fontcolor=font_colors[cores[i]], fixedsize='false',width='1')
         if grupos[i] == '-': continue
         if grupos[i] not in group_dict.keys():
             group_dict[grupos[i]] = list()
