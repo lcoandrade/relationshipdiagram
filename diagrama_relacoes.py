@@ -2,6 +2,7 @@
 
 from graphviz import Digraph
 import pandas as pd
+import sys
 
 #Atores
 fileloc = 'atores_relacoes.xlsx'
@@ -27,7 +28,7 @@ dirs = {'Sim':'both', 'Não':'forward'}
 Obtém o data frame do Pandas
 '''
 def getDataFrame(fileloc, ator, cor, grupo, de, relacionamento, para, tipo, bilateral):
-    #lendo o arquivo CSV pelo pandas
+    #lendo o arquivo EXCEL pelo pandas
     xls = pd.ExcelFile(fileloc)
     df_atores = pd.read_excel(xls, 'atores')
     df_relacionamentos = pd.read_excel(xls, 'relacionamentos')
@@ -117,6 +118,7 @@ g.attr(ratio = '0.5294')
 g.attr(newrank='true')
 
 #Constroi os dataframes do excel
+fileloc = sys.argv[1]
 df_atores, df_relacionamentos = getDataFrame(fileloc, ator, cor, grupo, de, relacionamento, para, tipo, bilateral)
 #Faz os nós dos atores
 group_dict, atores = makeActorNodes(df_atores)
