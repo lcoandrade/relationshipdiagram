@@ -2,40 +2,32 @@
 
 from graphviz import Digraph
 import pandas as pd
-import sys
+import glob
 
-#Atores
-fileloc = 'atores_relacoes.xlsx'
-ator = 'ator'
-cor = 'cor'
-grupo = 'grupo'
-#Relacionamentos
-de = 'de'
-relacionamento = 'relacionamento'
-para = 'para'
-tipo = 'tipo'
-bilateral = 'bilateral'
+#Associa cada cor na planilha a uma cor do Graphviz
+colors = {'Amarelo':'yellow','Azul':'blue','Branco':'white','Cinza':'grey','Marrom':'brown','Ouro':'gold','Preto':'black','Roxo':'purple','Verde':'green','Vermelho':'red','Laranja':'orange'}
+font_colors = {'Amarelo':'black','Azul':'white','Branco':'black','Cinza':'black','Marrom':'white','Ouro':'black','Preto':'white','Roxo':'white','Verde':'black','Vermelho':'black','Laranja':'black'}
 
-#Colors
-colors = {'Amarelo':'yellow','Azul':'blue','Cinza':'grey','Marrom':'brown','Ouro':'gold','Preto':'black','Roxo':'purple','Verde':'green','Vermelho':'red','Laranja':'orange'}
-font_colors = {'Amarelo':'black','Azul':'white','Cinza':'black','Marrom':'white','Ouro':'black','Preto':'white','Roxo':'white','Verde':'black','Vermelho':'black','Laranja':'black'}
-
-#Relation types
+#Associa os tipos de relação na planilha aos vértices no Graphviz
 types = {'Positivo':'blue', 'Negativo':'red', 'Neutro':'black'}
 dirs = {'Sim':'both', 'Não':'forward'}
 
 '''
 Obtém o data frame do Pandas
 '''
-def getDataFrame(fileloc, ator, cor, grupo, de, relacionamento, para, tipo, bilateral):
+def getDataFrame(fileloc):
     #lendo o arquivo EXCEL pelo pandas
-    xls = pd.ExcelFile(fileloc)
+    try:
+        xls = pd.ExcelFile(fileloc)
+    except:
+        return None, None
+
     df_atores = pd.read_excel(xls, 'atores')
     df_relacionamentos = pd.read_excel(xls, 'relacionamentos')
 
     #pegando os atores e relacionamentos
-    df_atores = df_atores.loc[:,[ator, cor, grupo]].dropna()
-    df_relacionamentos = df_relacionamentos.loc[:,[de, relacionamento, para, tipo, bilateral]].dropna()
+    df_atores = df_atores.loc[:,['ator', 'cor', 'grupo']].dropna()
+    df_relacionamentos = df_relacionamentos.loc[:,['de', 'relacionamento', 'para', 'tipo', 'bilateral']].dropna()
     return df_atores, df_relacionamentos
 
 '''
@@ -48,7 +40,7 @@ def makeActorNodes(df):
     group_dict = {}
     for i in range(len(atores)):
         if atores[i] not in grupos:
-            g.node(atores[i],shape='circle',color=colors[cores[i]],style='filled', fontcolor=font_colors[cores[i]], fixedsize='false',width='1')
+            g.node(atores[i],shape='circle',fillcolor=colors[cores[i]],style='filled', fontcolor=font_colors[cores[i]], fixedsize='false',width='1')
         if grupos[i] == '-': continue
         if grupos[i] not in group_dict.keys():
             group_dict[grupos[i]] = list()
@@ -72,7 +64,7 @@ def makeGroups(group_dict, atores):
 Cria os relacionamentos
 '''
 def makeRelationships(df, group_dict, atores):
-    ports=['n','ne','e','se','s','sw','w','nw']
+    #ports=['n','ne','e','se','s','sw','w','nw']
     #port_count_h = dict()
     #port_count_t = dict()
     des = list(df.iloc[:,0])
@@ -109,22 +101,32 @@ def makeRelationships(df, group_dict, atores):
 '''
 Rodando o código
 '''
-#Cria o grafico
-g = Digraph(filename='diagrama_relacoes', engine='dot', format='png')
-g.attr(compound='true')
-g.attr(rankdir='LR')
-g.attr(dpi='600')
-g.attr(ratio = '0.5294')
-g.attr(newrank='true')
+#Lista arquivos xlsx
+xlsx_files=glob.glob('*.xlsx')
+for fileloc in xlsx_files:
+#Cria o grafico para cada arquivo encontrado
+    #ignora arquivos temporários do Excel
+    if fileloc.startswith('~$'):
+        continue
+    
+    k = fileloc.rfind(".xlsx")
+    g = Digraph(filename=fileloc[:k], engine='dot', format='png')
+    g.attr(compound='true')
+    g.attr(rankdir='LR')
+    g.attr(dpi='600')
+    g.attr(ratio = '0.5294')
+    g.attr(newrank='true')
 
-#Constroi os dataframes do excel
-fileloc = sys.argv[1]
-df_atores, df_relacionamentos = getDataFrame(fileloc, ator, cor, grupo, de, relacionamento, para, tipo, bilateral)
-#Faz os nós dos atores
-group_dict, atores = makeActorNodes(df_atores)
-#Cria os clusters
-makeGroups(group_dict, atores)
-#Faz os relacionamentos
-makeRelationships(df_relacionamentos, group_dict, atores)
-#Abre o diagrama
-g.view()
+    #Constroi os dataframes do excel
+    df_atores, df_relacionamentos = getDataFrame(fileloc)
+    #Checa se getDataFrame foi bem sucedida
+    if df_atores is None and df_relacionamentos is None:
+        continue
+    #Faz os nós dos atores
+    group_dict, atores = makeActorNodes(df_atores)
+    #Cria os clusters
+    makeGroups(group_dict, atores)
+    #Faz os relacionamentos
+    makeRelationships(df_relacionamentos, group_dict, atores)
+    #Abre o diagrama
+    g.view()
