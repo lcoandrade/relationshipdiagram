@@ -103,8 +103,8 @@ Rodando o código
 '''
 #Lista arquivos xlsx
 xlsx_files=glob.glob('*.xlsx')
-for fileloc in xlsx_files:
 #Cria o grafico para cada arquivo encontrado
+for fileloc in xlsx_files:
     #ignora arquivos temporários do Excel
     if fileloc.startswith('~$'):
         continue
