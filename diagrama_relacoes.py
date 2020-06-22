@@ -19,10 +19,11 @@ Obtém o data frame do Pandas
 Recebe o nome do arquivo Excel
 Retorna as listas de atores e relacionamentos
 '''
-def get_data(fileloc):
-    #lendo o arquivo do Excel pelo pandas
+def get_data(fileloc, ext):
+    #lendo o arquivo usando Pandas
+    ext_engine={'.xls':'xlrd','.xlsx':'xlrd','.ods':'odf'}
     try:
-        df_at_rel = pd.read_excel(fileloc, ['atores','relacionamentos'])
+        df_at_rel = pd.read_excel(fileloc, ['atores','relacionamentos'], engine=ext_engine.get(ext,None))
     except:
         return None, None
 
@@ -92,28 +93,30 @@ def make_relationships(graph, relacionamentos, grupos):
 '''
 Rodando o código
 '''
-#Lista arquivos xlsx
-xlsx_files=glob.glob('*.xlsx')
-#Cria o grafico para cada arquivo encontrado
-for fileloc in xlsx_files:
-    #ignora arquivos temporários do Excel
-    if fileloc.startswith('~$'):
-        continue
-    
-    k = fileloc.rfind(".xlsx")
-    gattr = {'compound':'true', 'rankdir':'LR', 'dpi':'400', 'ratio':'0.5625', 'newrank':'true'}
-    g = Digraph(filename=fileloc[:k], engine='dot', format='png', graph_attr=gattr)
+#Lista arquivos xls, xlsx e ods
+files = {f:glob.glob('*'+f) for f in ['.ods','.xls','.xlsx']}
 
-    #Constroi os dataframes do excel
-    atores, relacionamentos = get_data(fileloc)
-    #Checa se get_data foi bem sucedida
-    if atores is None and relacionamentos is None:
-        continue
-    #Faz os nós dos atores
-    grupos = make_actor_nodes(g, atores)
-    #Cria os clusters
-    makeGroups(g, grupos)
-    #Faz os relacionamentos
-    make_relationships(g, relacionamentos, grupos)
-    #Abre o diagrama
-    g.view()
+#Cria o gráfico para cada arquivo encontrado
+for ext,lista_f in files.items():
+    for fileloc in lista_f:
+        #ignora arquivos temporários do Excel
+        if fileloc.startswith('~$'):
+            continue
+        
+        k = fileloc.rfind(ext)
+        gattr = {'compound':'true', 'rankdir':'LR', 'dpi':'400', 'ratio':'0.5625', 'newrank':'true'}
+        g = Digraph(filename=fileloc[:k], engine='dot', format='png', graph_attr=gattr)
+
+        #Constroi os dataframes do excel
+        atores, relacionamentos = get_data(fileloc, ext)
+        #Checa se get_data foi bem sucedida
+        if atores is None and relacionamentos is None:
+            continue
+        #Faz os nós dos atores
+        grupos = make_actor_nodes(g, atores)
+        #Cria os clusters
+        makeGroups(g, grupos)
+        #Faz os relacionamentos
+        make_relationships(g, relacionamentos, grupos)
+        #Abre o diagrama
+        g.view()

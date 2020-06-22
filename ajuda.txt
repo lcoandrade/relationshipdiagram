@@ -12,6 +12,7 @@ Para executar esse script, é necessário:
  * pacotes python
    - graphviz
    - xlrd
+   - odfpy
    - pandas
-   - para instalar: "pip install graphviz xlrd pandas"
+   - para instalar: "pip install graphviz xlrd odfpy pandas"
    
