@@ -1,5 +1,6 @@
 # relationshipdiagram
 Relationship Diagram (Directed Graph)
+
 Para executar esse script, é necessário:
 
  * python 3 instalado e no PATH
