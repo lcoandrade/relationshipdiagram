@@ -1,20 +1,24 @@
 # relationshipdiagram
 Relationship Diagram (Directed Graph)
 
+Video com demonstração do uso: https://youtu.be/6xwjbfyR9Zg
+
 Para executar esse script, é necessário:
 
- * python 3 instalado e no PATH
+ * Python 3 instalado e no PATH
    - Disponível em https://www.python.org/downloads/
-   - no windows, marcar a inclusão no PATH durante a instalação
+   - No windows, marcar a inclusão no PATH durante a instalação
+   - Instruções detalhadas para instalação do Python no Windows: https://python.org.br/instalacao-windows/
  
- * graphviz instalado e no PATH
+ * Graphviz instalado e no PATH
    - Disponível em https://graphviz.org/download/
-   - no windows, marcar a inclusão no PATH durante a instalação
-   - no windows, após instalar, executar o comando "dot -c" como administrador (necessário apenas uma vez)
+   - No windows, marcar a inclusão no PATH durante a instalação. Caso falhe, consultar as instruções detalhadas abaixo.
+   - No windows, após instalar, executar o comando "dot -c" como administrador (necessário apenas uma vez)
+   - Instruções detalhadas para instalação do Graphviz no Windows: https://www.slideshare.net/cristianorolim1/tutorial-de-instalao-do-graphviz-no-windows-10
    
  * pacotes python
    - graphviz
    - xlrd
    - odfpy
    - pandas
-   - para instalar: "pip install graphviz xlrd odfpy pandas"
+   - para instalar, executar via linha de comando: "pip install graphviz xlrd odfpy pandas"
