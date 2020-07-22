@@ -19,11 +19,14 @@ Para executar esse script, é necessário:
       - Instruções detalhadas para instalação do Graphviz no Windows: https://www.slideshare.net/cristianorolim1/tutorial-de-instalao-do-graphviz-no-windows-10
    - No macOS:
       - Instalar o homebrew (caso não esteja instalado), digitando no terminal: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
-      - Digitar no terminal: brew install graphviz
+      - executar no terminal: brew install graphviz
    
  * pacotes python
    - graphviz
    - xlrd
    - odfpy
    - pandas
-   - para instalar, executar via linha de comando: "pip install graphviz xlrd odfpy pandas"
+   - para instalar no Windows
+      - executar via linha de comando: "pip install graphviz xlrd odfpy pandas"
+   _ para instalar no macOS:
+      - executar no terminal: "pip3 install graphviz xlrd odfpy pandas"
