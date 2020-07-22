@@ -28,5 +28,5 @@ Para executar esse script, é necessário:
    - pandas
    - para instalar no Windows
       - executar via linha de comando: "pip install graphviz xlrd odfpy pandas"
-   _ para instalar no macOS:
+   - para instalar no macOS:
       - executar no terminal: "pip3 install graphviz xlrd odfpy pandas"
