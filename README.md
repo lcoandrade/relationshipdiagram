@@ -18,6 +18,7 @@ Para executar esse script, é necessário:
       - No windows, após instalar, executar o comando "dot -c" como administrador (necessário apenas uma vez)
       - Instruções detalhadas para instalação do Graphviz no Windows: https://www.slideshare.net/cristianorolim1/tutorial-de-instalao-do-graphviz-no-windows-10
    - No macOS:
+      - Executar no terminal: xcode-select --install
       - Instalar o homebrew (caso não esteja instalado), digitando no terminal: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
       - executar no terminal: brew install graphviz
    
