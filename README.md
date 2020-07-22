@@ -9,7 +9,7 @@ Para executar esse script, é necessário:
    - Disponível em https://www.python.org/downloads/
    - No windows, marcar a inclusão no PATH durante a instalação
    - Instruções detalhadas para instalação do Python no Windows: https://python.org.br/instalacao-windows/
-   - Instruções detalhadas para instalação do Python no macOS:https://python.org.br/instalacao-mac/ ou https://www.python.org/downloads/mac-osx/
+   - Instruções detalhadas para instalação do Python no macOS:https://www.python.org/downloads/mac-osx/
  
  * Graphviz instalado e no PATH
    - No Windows:
@@ -18,7 +18,7 @@ Para executar esse script, é necessário:
       - No windows, após instalar, executar o comando "dot -c" como administrador (necessário apenas uma vez)
       - Instruções detalhadas para instalação do Graphviz no Windows: https://www.slideshare.net/cristianorolim1/tutorial-de-instalao-do-graphviz-no-windows-10
    - No macOS:
-      - Instalar o homebrew (caso não esteja instalado), digitando no terminal: ruby -e "$(curl -fsSL https://raw.github.com/mxcl/homebrew/go)"
+      - Instalar o homebrew (caso não esteja instalado), digitando no terminal: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
       - Digitar no terminal: brew install graphviz
    
  * pacotes python
