@@ -2,13 +2,17 @@
 
 from graphviz import Digraph
 import pandas as pd
+import numpy as np
 import glob
 
 #Associa cada cor na planilha a um par (cor de fundo,cor da fonte) do Graphviz
 colors = {'Amarelo':('yellow','black'),'Azul':('blue','white'),'Branco':('white','black'),
-         'Cinza':('grey','black'),'Marrom':('brown','white'),'Ouro':('gold','black'),
+         'Cinza':('grey','black'),'Marrom':('brown','white'),'Ouro':('gold3','black'),
          'Preto':('black','white'),'Roxo':('purple','white'),'Verde':('green','black'),
-         'Vermelho':('red','black'),'Laranja':('orange','black')}
+         'Vermelho':('red','black'),'Laranja':('orangered','black')}
+colors_sub = { 'Amarelo':'#ffff005f','Azul':'cyan','Branco':'white','Cinza':'gray95',
+             'Marrom':'#a52a2a5f','Ouro':'gold','Preto':'black','Roxo':'mediumpurple1',
+             'Verde':'palegreen','Vermelho':'tomato','Laranja':'orange' }
 
 #Associa os tipos de relação na planilha aos vértices no Graphviz
 rel_types = {'Positivo':'blue', 'Negativo':'red', 'Neutro':'black'}
@@ -28,9 +32,9 @@ def get_data(fileloc, ext):
         return None, None
 
     #Obtendo os atores e relacionamentos
-    df_atores = df_at_rel['atores'].loc[:,['ator', 'cor', 'grupo']].dropna()
+    df_atores = df_at_rel['atores'].loc[:,['ator', 'cor', 'grupo']].dropna(subset=['ator']).replace({np.nan: None})
     df_relacionamentos = df_at_rel['relacionamentos'].loc[:,['de', 'relacionamento', 'para', 'tipo', 'bilateral']].dropna()
-    return df_atores.values.tolist(), df_relacionamentos.values.tolist()
+    return df_atores.to_numpy().tolist(), df_relacionamentos.to_numpy().tolist()
 
 '''
 Faz os nós dos atores
@@ -38,27 +42,37 @@ Recebe o objeto Digraph e a lista de atores
 Retorna o Dicionário com os grupos e membros
 '''
 def make_actor_nodes(graph,atores):
-    grupos = {}
+    lst_grupos = set()
     for ator in atores:
+        ator_nome, ator_cor, ator_grupo = ator
+        if ator_grupo is not None: lst_grupos.add(ator_grupo)
+    grupos = {}
+    grupos_cores = {}
+    for ator in atores:        
         #expandindo os parâmetros da lista
         ator_nome, ator_cor, ator_grupo = ator
+        if ator_cor is None: ator_cor = "Branco"
+        if ator_nome in lst_grupos:
+            grupos_cores[ator_nome] = ator_cor
+            continue
         graph.node(ator_nome,shape='circle',fillcolor=colors[ator_cor][0],style='filled', fontcolor=colors[ator_cor][1], fixedsize='false',width='1')
-        if ator_grupo == '-': continue
+        if ator_grupo is None: continue
         if ator_grupo not in grupos:
             grupos[ator_grupo] = list()
         grupos[ator_grupo].append(ator_nome)
-    return grupos
+    return grupos, grupos_cores
 
 '''
 Faz os agrupamentos
 Recebe o objeto Digraph e Dicionário com os grupos e membros
 '''
-def makeGroups(graph, grupos):
+def makeGroups(graph, grupos, grupos_cores):
     for grupo,membros in grupos.items():
         with graph.subgraph(name='cluster_'+grupo) as sub_g:
             sub_g.attr(label=grupo)
-            sub_g.attr(style='rounded')
-            sub_g.attr(rank='min')
+            sub_g.attr(style='filled')
+            sub_g.attr(fillcolor=colors_sub[grupos_cores.get(grupo,'Branco')])
+            sub_g.attr(rank='source')
             for membro in membros:
                 sub_g.node(membro)
 
@@ -71,7 +85,7 @@ def make_relationships(graph, relacionamentos, grupos):
         #expandindo os parâmetros da lista
         de, legenda, para, tipo, bilateral = relacionamento
         #Parâmetros básicos
-        params = {'dir':dirs[bilateral], 'color':rel_types[tipo], 'fontcolor':rel_types[tipo], 'fontsize':'12', 'penwidth':'1.0', 'decorate':'false'}
+        params = {'dir':dirs[bilateral], 'color':rel_types[tipo], 'fontcolor':rel_types[tipo], 'penwidth':'1.0', 'decorate':'false', 'minlen':'2'}
 
         #Ajustando caso o relacionamento envolva clusters
         if de in grupos.keys():
@@ -104,7 +118,16 @@ for ext,lista_f in files.items():
             continue
         
         k = fileloc.rfind(ext)
-        gattr = {'compound':'true', 'rankdir':'LR', 'dpi':'400', 'ratio':'0.5625', 'newrank':'true'}
+        gattr = dict()
+        gattr['compound'] = 'true'
+        gattr['rankdir'] = 'LR'
+        gattr['dpi'] = '300'
+        gattr['ratio'] = '0.5625'
+        gattr['newrank'] = 'true'
+        gattr['overlap'] = 'false'
+        gattr['splines'] = 'true'
+        gattr['fontsize'] = '20'
+
         g = Digraph(filename=fileloc[:k], engine='dot', format='png', graph_attr=gattr)
 
         #Constroi os dataframes do excel
@@ -113,9 +136,9 @@ for ext,lista_f in files.items():
         if atores is None and relacionamentos is None:
             continue
         #Faz os nós dos atores
-        grupos = make_actor_nodes(g, atores)
+        grupos, grupos_cores = make_actor_nodes(g, atores)
         #Cria os clusters
-        makeGroups(g, grupos)
+        makeGroups(g, grupos, grupos_cores)
         #Faz os relacionamentos
         make_relationships(g, relacionamentos, grupos)
         #Abre o diagrama
