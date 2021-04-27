@@ -4,6 +4,7 @@ from graphviz import Digraph
 import pandas as pd
 import numpy as np
 import glob
+import os
 
 #Associa cada cor na planilha a um par (cor de fundo,cor da fonte) do Graphviz
 colors = {'Amarelo':('yellow','black'),'Azul':('blue','white'),'Branco':('white','black'),
@@ -68,6 +69,7 @@ Recebe o objeto Digraph e Dicionário com os grupos e membros
 '''
 def makeGroups(graph, grupos, grupos_cores):
     sub_graphs = {}
+    #Cria todos os grupos
     for grupo,membros in grupos.items():
         sub_g = Digraph(name='cluster_'+grupo)
         sub_g.attr(label=grupo)
@@ -78,17 +80,15 @@ def makeGroups(graph, grupos, grupos_cores):
             if membro not in grupos.keys():
                 sub_g.node(membro)
         sub_graphs[grupo]=sub_g
-
+    #Resolve os grupos aninhados
     for grupo,membros in grupos.items():
         for membro in membros:
             if membro in grupos.keys():
                 sub_graphs[grupo].subgraph(sub_graphs[membro])
                 sub_graphs.pop(membro)
-                
+    #Insere tudo no grafo principal            
     for s in sub_graphs.values():
         graph.subgraph(s)
-
-
 
 '''
 Cria os relacionamentos
@@ -119,9 +119,9 @@ def make_relationships(graph, relacionamentos, grupos):
         graph.edge(deN, paraN, label=legenda, **params)
 
 '''
-Rodando o código
+Loop principal
 '''
-#Lista arquivos xls, xlsx e ods
+#Monta a lista arquivos .xls, .xlsx e .ods na pasta
 files = {f:glob.glob('*'+f) for f in ['.ods','.xls','.xlsx']}
 
 #Cria o gráfico para cada arquivo encontrado
@@ -131,6 +131,8 @@ for ext,lista_f in files.items():
         if fileloc.startswith('~$'):
             continue
         
+        print("Processando arquivo: " + fileloc)
+
         k = fileloc.rfind(ext)
         gattr = dict()
         gattr['compound'] = 'true'
@@ -155,5 +157,7 @@ for ext,lista_f in files.items():
         makeGroups(g, grupos, grupos_cores)
         #Faz os relacionamentos
         make_relationships(g, relacionamentos, grupos)
-        #Abre o diagrama
+        #Cria e abre o arquivo
         g.view()
+        #Remove arquivo intermediário
+        os.remove(fileloc[:k])
