@@ -1,4 +1,5 @@
 graphviz
 xlrd
+openpyxl
 odfpy
 pandas

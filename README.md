@@ -25,9 +25,10 @@ Para executar esse script, é necessário:
  * pacotes python
    - graphviz
    - xlrd
+   - openpyxl
    - odfpy
    - pandas
    - para instalar no Windows
-      - executar via linha de comando: "pip install graphviz xlrd odfpy pandas"
+      - executar via linha de comando: "pip install graphviz xlrd openpyxl odfpy pandas"
    - para instalar no macOS:
-      - executar no terminal: "pip3 install graphviz xlrd odfpy pandas"
+      - executar no terminal: "pip3 install graphviz xlrd openpyxl odfpy pandas"

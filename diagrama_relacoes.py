@@ -25,7 +25,7 @@ Retorna as listas de atores e relacionamentos
 '''
 def get_data(fileloc, ext):
     #lendo o arquivo usando Pandas
-    ext_engine={'.xls':'xlrd','.xlsx':'xlrd','.ods':'odf'}
+    ext_engine={'.xls':'xlrd','.xlsx':'openpyxl','.ods':'odf'}
     try:
         df_at_rel = pd.read_excel(fileloc, ['atores','relacionamentos'], engine=ext_engine.get(ext,None))
     except:
@@ -54,8 +54,8 @@ def make_actor_nodes(graph,atores):
         if ator_cor is None: ator_cor = "Branco"
         if ator_nome in lst_grupos:
             grupos_cores[ator_nome] = ator_cor
-            continue
-        graph.node(ator_nome,shape='circle',fillcolor=colors[ator_cor][0],style='filled', fontcolor=colors[ator_cor][1], fixedsize='false',width='1')
+        else:
+            graph.node(ator_nome,shape='circle',fillcolor=colors[ator_cor][0],style='filled', fontcolor=colors[ator_cor][1], fixedsize='false',width='1')
         if ator_grupo is None: continue
         if ator_grupo not in grupos:
             grupos[ator_grupo] = list()
@@ -67,14 +67,28 @@ Faz os agrupamentos
 Recebe o objeto Digraph e Dicionário com os grupos e membros
 '''
 def makeGroups(graph, grupos, grupos_cores):
+    sub_graphs = {}
     for grupo,membros in grupos.items():
-        with graph.subgraph(name='cluster_'+grupo) as sub_g:
-            sub_g.attr(label=grupo)
-            sub_g.attr(style='filled')
-            sub_g.attr(fillcolor=colors_sub[grupos_cores.get(grupo,'Branco')])
-            sub_g.attr(rank='source')
-            for membro in membros:
+        sub_g = Digraph(name='cluster_'+grupo)
+        sub_g.attr(label=grupo)
+        sub_g.attr(style='rounded')
+        sub_g.attr(bgcolor=colors_sub[grupos_cores.get(grupo,'Branco')])
+        sub_g.attr(rank='source')
+        for membro in membros:
+            if membro not in grupos.keys():
                 sub_g.node(membro)
+        sub_graphs[grupo]=sub_g
+
+    for grupo,membros in grupos.items():
+        for membro in membros:
+            if membro in grupos.keys():
+                sub_graphs[grupo].subgraph(sub_graphs[membro])
+                sub_graphs.pop(membro)
+                
+    for s in sub_graphs.values():
+        graph.subgraph(s)
+
+
 
 '''
 Cria os relacionamentos
