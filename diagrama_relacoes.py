@@ -1,5 +1,3 @@
-#_*_ coding=utf-8 _*_
-
 from graphviz import Digraph
 import pandas as pd
 import numpy as np
@@ -64,32 +62,55 @@ def make_actor_nodes(graph,atores):
     return grupos, grupos_cores
 
 '''
+Cria um subgrafo
+Recebe o nome e cor do grupo
+Retorna o subgrafo criado
+'''
+def makeGroup(grupo_nome, grupo_cor, nivel=1 ):
+    sub_g = Digraph(name='cluster_'+grupo_nome)
+    sub_g.attr(label=grupo_nome)
+    sub_g.attr(style='rounded')
+    sub_g.attr(bgcolor=colors_sub[grupo_cor])
+    return sub_g
+
+'''
+Insere os nós e grupos em um subgrafo
+'''
+def fillGroup(sub_g, grupos, grupos_cores, membros, not_root, nivel=1 ):
+    for membro in membros:
+        if membro not in grupos.keys():
+            sub_g.node(membro)
+        else:
+            new_g = makeGroup(membro, grupos_cores.get(membro,'Branco'), nivel+1)
+            fillGroup(new_g, grupos, grupos_cores, grupos[membro], not_root, nivel+1)
+            sub_g.subgraph(new_g)
+            not_root.add(membro)
+
+'''
 Faz os agrupamentos
 Recebe o objeto Digraph e Dicionário com os grupos e membros
 '''
 def makeGroups(graph, grupos, grupos_cores):
     sub_graphs = {}
+    not_root = set()
     #Cria todos os grupos
     for grupo,membros in grupos.items():
-        sub_g = Digraph(name='cluster_'+grupo)
-        sub_g.attr(label=grupo)
-        sub_g.attr(style='rounded')
-        sub_g.attr(bgcolor=colors_sub[grupos_cores.get(grupo,'Branco')])
-        sub_g.attr(rank='source')
-        for membro in membros:
-            if membro not in grupos.keys():
-                sub_g.node(membro)
+        sub_g = makeGroup(grupo, grupos_cores.get(grupo,'Branco'), 1)
+        fillGroup(sub_g, grupos, grupos_cores, membros, not_root, 1)
         sub_graphs[grupo]=sub_g
-    #Resolve os grupos aninhados
-    for grupo,membros in grupos.items():
-        for membro in membros:
-            if membro in grupos.keys():
-                sub_graphs[grupo].subgraph(sub_graphs[membro])
-                sub_graphs.pop(membro)
-    #Insere tudo no grafo principal            
-    for s in sub_graphs.values():
-        graph.subgraph(s)
 
+    #Insere tudo no grafo principal
+    for k,v in sub_graphs.items():
+        if k not in not_root:
+            graph.subgraph(v)
+
+def find_actor(grupos, grupo):
+    for membro in grupos[grupo]:
+        if membro not in grupos.keys():
+            return membro
+        else:
+            return find_actor(grupos, membro)
+    
 '''
 Cria os relacionamentos
 Recebe o objeto Digraph, a lista de relacionamentos e o Dicionário com os grupos e membros
@@ -106,14 +127,14 @@ def make_relationships(graph, relacionamentos, grupos):
             #Criando a chave ltail para o relacionamento com o cluster
             params['ltail'] = 'cluster_'+de
             #Pegando um ator qualquer (o primeiro) dentro do cluster
-            deN = grupos[de][0]
+            deN = find_actor(grupos, de)
         else:
             deN = de
         if para in grupos.keys():
             #Criando a chave lhead para o relacionamento com o cluster
             params['lhead'] = 'cluster_'+para
              #Pegando um ator qualquer (o primeiro) dentro do cluster
-            paraN = grupos[para][0]
+            paraN = find_actor(grupos, para)
         else:
             paraN = para
         graph.edge(deN, paraN, label=legenda, **params)
@@ -135,13 +156,14 @@ for ext,lista_f in files.items():
 
         k = fileloc.rfind(ext)
         gattr = dict()
-        gattr['compound'] = 'true'
+        #allow edges between clusters
+        gattr['compound'] = 'true'        
         gattr['rankdir'] = 'LR'
-        gattr['dpi'] = '300'
-        gattr['ratio'] = '0.5625'
+        gattr['ranksep'] = '1.0'
+        #gattr['dpi'] = '300'
+        #gattr['ratio'] = '0.5625'
         gattr['newrank'] = 'true'
-        gattr['overlap'] = 'false'
-        gattr['splines'] = 'true'
+        gattr['overlap'] = 'false'        
         gattr['fontsize'] = '20'
 
         g = Digraph(filename=fileloc[:k], engine='dot', format='png', graph_attr=gattr)
